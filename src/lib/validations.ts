@@ -15,7 +15,7 @@ export const customerSchema = z
     credential_password: z.string().max(200).optional().or(z.literal("")),
     source: z.string().trim().max(120).optional().or(z.literal("")),
     notes: z.string().trim().max(1000).optional().or(z.literal("")),
-    price: z.coerce.number().min(0, "Price can't be negative").max(100000),
+    price: z.coerce.number().min(0, "Price can't be negative").max(1000000),
     purchase_date: isoDate,
     expire_date: isoDate,
   })
