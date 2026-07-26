@@ -1,15 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_ROUTES = ["/login", "/auth"];
 
-/**
- * Refreshes the auth cookie on every request and gates the app.
- * getUser() (not getSession()) because only getUser hits the auth server
- * and actually validates the JWT.
- */
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  let response = NextResponse.next({
+    request,
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,20 +16,25 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-       setAll(
-  cookiesToSet: Array<{
-    name: string;
-    value: string;
-    options?: Parameters<typeof response.cookies.set>[2];
-  }>,
-)  {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
-          );
+
+        setAll(
+          cookiesToSet: {
+            name: string;
+            value: string;
+            options?: Parameters<typeof response.cookies.set>[2];
+          }[],
+        ) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+
+          response = NextResponse.next({
+            request,
+          });
+
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
         },
       },
     },
@@ -43,7 +45,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname, search } = request.nextUrl;
-  const isPublic = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
+
+  const isPublic = PUBLIC_ROUTES.some((route) =>
+    pathname.startsWith(route),
+  );
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
