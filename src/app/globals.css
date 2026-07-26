@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 30% 97%;
+    --foreground: 224 40% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 40% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 40% 12%;
+
+    --primary: 248 76% 62%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 20% 93%;
+    --secondary-foreground: 224 40% 18%;
+
+    --muted: 220 20% 94%;
+    --muted-foreground: 222 12% 44%;
+
+    --accent: 248 60% 95%;
+    --accent-foreground: 248 60% 35%;
+
+    --destructive: 352 78% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 18% 88%;
+    --input: 222 18% 88%;
+    --ring: 248 76% 62%;
+
+    --signal-fresh: 162 68% 40%;
+    --signal-steady: 199 78% 45%;
+    --signal-soon: 38 92% 48%;
+    --signal-today: 14 90% 55%;
+    --signal-lapsed: 352 60% 52%;
+
+    --glass-tint: 0 0% 100%;
+    --glass-alpha: 0.72;
+    --glass-edge: 0 0% 100%;
+
+    --radius: 0.9rem;
+  }
+
+  .dark {
+    --background: 226 42% 7%;
+    --foreground: 220 24% 94%;
+
+    --card: 226 34% 11%;
+    --card-foreground: 220 24% 94%;
+    --popover: 226 36% 10%;
+    --popover-foreground: 220 24% 94%;
+
+    --primary: 250 84% 70%;
+    --primary-foreground: 226 42% 8%;
+
+    --secondary: 226 26% 17%;
+    --secondary-foreground: 220 24% 92%;
+
+    --muted: 226 24% 16%;
+    --muted-foreground: 220 12% 62%;
+
+    --accent: 250 40% 22%;
+    --accent-foreground: 250 90% 88%;
+
+    --destructive: 352 72% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 226 22% 20%;
+    --input: 226 22% 22%;
+    --ring: 250 84% 70%;
+
+    --signal-fresh: 160 72% 46%;
+    --signal-steady: 199 84% 58%;
+    --signal-soon: 41 96% 58%;
+    --signal-today: 14 94% 63%;
+    --signal-lapsed: 352 78% 65%;
+
+    --glass-tint: 228 32% 16%;
+    --glass-alpha: 0.55;
+    --glass-edge: 240 60% 90%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Ambient field behind the app — two slow aurora blooms, no animation cost */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        60rem 40rem at 12% -10%,
+        hsl(var(--primary) / 0.16),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 36rem at 100% 8%,
+        hsl(var(--signal-steady) / 0.12),
+        transparent 62%
+      );
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.28);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+    background-clip: content-box;
+  }
+}
+
+@layer components {
+  /* The glass surface. One definition, used everywhere. */
+  .glass {
+    background-color: hsl(var(--glass-tint) / var(--glass-alpha));
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid hsl(var(--glass-edge) / 0.1);
+    box-shadow:
+      0 1px 0 0 hsl(var(--glass-edge) / 0.08) inset,
+      0 18px 40px -24px hsl(226 60% 4% / 0.55);
+  }
+
+  .glass-hover {
+    transition:
+      transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.25s ease;
+  }
+  .glass-hover:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow:
+      0 1px 0 0 hsl(var(--glass-edge) / 0.12) inset,
+      0 26px 50px -26px hsl(226 60% 4% / 0.7);
+  }
+
+  /* Tabular numbers for every countdown, price and date in the app */
+  .numeric {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
